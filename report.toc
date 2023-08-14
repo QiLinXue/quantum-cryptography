@@ -1,0 +1,19 @@
+\tocdepth@munge 
+\contentsline {section}{\numberline {}Contents}{1}{section*.1}%
+\tocdepth@restore 
+\contentsline {section}{\numberline {I}TODO}{1}{section*.2}%
+\contentsline {section}{\numberline {II}Introduction}{2}{section*.3}%
+\contentsline {subsection}{\numberline {A}Motivation}{2}{section*.5}%
+\contentsline {section}{\numberline {III}All-Photonics Quantum Repeater}{3}{section*.6}%
+\contentsline {subsection}{\numberline {A}Brief Overview}{3}{section*.7}%
+\contentsline {subsection}{\numberline {B}Constructing a Graph}{3}{section*.9}%
+\contentsline {subsection}{\numberline {C}Photonic Tree}{4}{section*.10}%
+\contentsline {subsection}{\numberline {D}Building a Cluster State}{4}{section*.12}%
+\contentsline {subsection}{\numberline {E}Basic Mechanisms}{4}{section*.13}%
+\contentsline {section}{\numberline {IV}Naive Approach}{5}{section*.14}%
+\contentsline {subsection}{\numberline {A}Probability Computation}{5}{section*.15}%
+\contentsline {subsection}{\numberline {B}Optimization}{6}{section*.16}%
+\contentsline {section}{\numberline {V}Improved Approach}{6}{section*.18}%
+\contentsline {section}{\numberline {VI}Rate Calculations}{7}{section*.19}%
+\contentsline {subsection}{\numberline {A}Naive Approach}{9}{section*.21}%
+\contentsline {subsection}{\numberline {B}Analysis}{9}{section*.23}%

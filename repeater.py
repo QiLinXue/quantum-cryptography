@@ -72,7 +72,8 @@ class NaiveRepeater(Repeater):
         else:
             P_cn = self.get_P_cn_from_Ns(Ns)
 
-        A = self.m*(0.5*self.eta_s**2 + 0.25*self.eta_s**4)
+
+        A = self.m*(0.5*self.eta_s)
         B = self.P_chip**(self.k+2)*self.eta_GHZ*self.eta_c
         C = self.P_chip**(self.k+2)*self.eta_GHZ*self.eta_c
         # eta = ((A*B**2)**(-z))**n
@@ -82,11 +83,10 @@ class NaiveRepeater(Repeater):
         P_Z = (1 - (1 - eta**(1/(2*self.n))*B)**(b[1]+1))**b[0]
 
         N = 2*self.m*(b[0]*b[1]+b[0]+1)
-        P_B = A*B**2/self.m*eta**(1/(self.n))
-        P_end = 1 - (1 - eta**(1/(2*self.n))*C)**(N/2)
+        P_B = A*B**2/self.m*eta**(1/(2*self.n))
+        P_end = 1 - (1 - eta**(1/(2*self.n))*C)**(self.m)
 
         return P_cn/(N) * P_end**2 * P_Z**(2*self.n*(self.m-1)) * P_X**(2*self.n) * (1 - (1-P_B)**self.m)**(self.n-1)
-    
     def get_min_Ns(self, Ns_min=6, Ns_max=16):
         Ns_list = np.logspace(Ns_min, Ns_max, 10)
         threshold = 0.9
@@ -190,7 +190,10 @@ def make_plot_1():
     cutoff_index = next((i for i, value in enumerate(naive_P_cn_list) if value > 1e-30)) - 1
 
     naive_N_s_list = naive_N_s_list[cutoff_index:]
+    print("hi1")
+
     naive_P_cn_list = naive_P_cn_list[cutoff_index:]
+    print("hi2")
 
     # Plot for Naive Repeater
     plt.figure(figsize=(10,7))
@@ -202,12 +205,18 @@ def make_plot_1():
     plt.ylim(1e-30, 1)
     plt.xticks([10**i for i in range(6, 14, 2)])
     plt.legend()
-    plt.show()
+    # Make labels bigger
+    plt.tick_params(axis='both', which='major', labelsize=14)
+    
+    # Make xlabel and ylabel bigger
+    plt.xlabel("$N_s$", fontsize=20)
+    plt.ylabel("$P_{cn}$", fontsize=20)
+    plt.savefig("figs/p_graph.png")
 
 def get_R_list(L_list, n):
     print("Computing R_list for n = %s" % n)
     repeater = ImprovedRepeater(k=8, n=n, m = 4)
-    return [repeater.get_rate([7,3], L, 10**7) for L in L_list]
+    return [repeater.get_rate([7,3], L, None) for L in L_list]
 
 def make_plot_2():
     L_list = np.linspace(0, 1000e3, 100)
@@ -233,7 +242,7 @@ def make_plot_2():
     plt.yscale("log")
     # plt.show()
     # Save plot
-    plt.savefig("secret_key_bits_per_mode.png")
+    plt.savefig("figs/e_graph.png")
 
 def get_optimal_rate(k, m, b0, b1, L, repeater_type):
     n_range = np.linspace(1, 3000, 200)
@@ -318,48 +327,47 @@ def get_optimal_key_rate(k, L, repeaterType):
     optimal_rate = get_optimal_rate(k, opt_params_dict[k][0], opt_params_dict[k][1][0], opt_params_dict[k][1][1], L, repeaterType)[0]
     return optimal_rate
 
-if __name__ == "__main__":
-    # make_plot_1()
-    # # get_optimal_params(7, ImprovedRepeater, 4, 4, 2)
-    # # get_optimal_params(8, ImprovedRepeater, 5, 5, 3)
-    # # get_optimal_params(9, ImprovedRepeater, 6, 7, 4)
-    # # get_optimal_params(10, ImprovedRepeater, 8, 10, 5)
-
-    # # print(get_optimal_rate(8, 4, 7, 3, 200e3, ImprovedRepeater))
-    # # print(get_optimal_rate(8, 4, 7, 3, 400e3, ImprovedRepeater))
-    # # print(get_optimal_rate(8, 4, 7, 3, 600e3, ImprovedRepeater))
-    # # print(get_optimal_rate(8, 4, 7, 3, 800e3, ImprovedRepeater))
-
-    params_7 = get_optimal_params(7, NaiveRepeater, 5, 3, 2)
-    params_8 = get_optimal_params(8, NaiveRepeater, 8, 4, 2)
-    params_9 = get_optimal_params(9, NaiveRepeater, 11, 5, 3)
-    params_10 = get_optimal_params(10, NaiveRepeater, 12, 7, 4)
-
-    # L_list = np.linspace(0, 500e3, 20)
-    # key_rate_list_7 = [get_optimal_key_rate(7, L, NaiveRepeater) for L in L_list]
-    # key_rate_list_8 = [get_optimal_key_rate(8, L, NaiveRepeater) for L in L_list]
-    # key_rate_list_9 = [get_optimal_key_rate(9, L, NaiveRepeater) for L in L_list]
-    # key_rate_list_10 = [get_optimal_key_rate(10, L, NaiveRepeater) for L in L_list]
-
-    # plt.plot(L_list, key_rate_list_7, label="k = 7", color="gold")
-    # plt.plot(L_list, key_rate_list_8, label="k = 8", color="purple")
-    # plt.plot(L_list, key_rate_list_9, label="k = 9", color="green")
-    # plt.plot(L_list, key_rate_list_10, label="k = 10", color="skyblue")
+def make_table():
     
-    # # make label next to line
-    # plt.legend()
+    get_optimal_params(7, ImprovedRepeater, 4, 4, 2)
+    get_optimal_params(8, ImprovedRepeater, 5, 5, 3)
+    get_optimal_params(9, ImprovedRepeater, 6, 7, 4)
+    get_optimal_params(10, ImprovedRepeater, 8, 10, 5)
 
-    # # log scale for y axis
-    # plt.yscale("log")
+if __name__ == "__main__":
+    L_list = np.linspace(0, 500e3, 20)
+    key_rate_list_7 = [get_optimal_key_rate(7, L, ImprovedRepeater) for L in L_list]
+    key_rate_list_8 = [get_optimal_key_rate(8, L, ImprovedRepeater) for L in L_list]
+    key_rate_list_9 = [get_optimal_key_rate(9, L, ImprovedRepeater) for L in L_list]
+    key_rate_list_10 = [get_optimal_key_rate(10, L, ImprovedRepeater) for L in L_list]
 
-    # # more ticks
-    # plt.yticks([10**i for i in range(-9, 1, 1)])
-    # plt.ylim(1e-9, 1)
-    # plt.xlim(0, 500e3)
+    # Scale L_list by 1000
+    L_list = [L/1000 for L in L_list]
+    
+    plt.plot(L_list, key_rate_list_7, label="k = 7", color="gold")
+    plt.plot(L_list, key_rate_list_8, label="k = 8", color="purple")
+    plt.plot(L_list, key_rate_list_9, label="k = 9", color="green")
+    plt.plot(L_list, key_rate_list_10, label="k = 10", color="skyblue")
+    
+    # make label next to line
+    plt.legend()
 
-    # # Grid lines
-    # plt.grid(True, which="both", axis="both")
+    # log scale for y axis
+    plt.yscale("log")
+
+    # more ticks
+    plt.yticks([10**i for i in range(-9, 1, 1)])
+    plt.ylim(1e-9, 1)
+    plt.xlim(0, 500)
+
+    # Grid lines
+    plt.grid(True, which="both", axis="both")
     # plt.show()
-    # # Save figure
-    # plt.savefig("secret_key_bits_per_mode.png")
+    # Save figure
+    # x label: "Distance (km)"
+    # y label: "Key Rate (bits per pulse)"
+    
+    plt.xlabel("Distance (km)", fontsize=20)
+    plt.ylabel("Key Rate (bits per pulse)", fontsize=20)
+    plt.savefig("figs/3b.png")
      
